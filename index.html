@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@5.0.0/dist/aframe-event-set-component.min.js"></script>
+    <style>
+        #info-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(420px, 90vw);
+            padding: 22px 24px 20px;
+            background: rgba(255, 255, 255, 0.97);
+            color: #111;
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+            font-family: Arial, sans-serif;
+            display: none;
+            z-index: 1001;
+        }
+        #info-card.visible {
+            display: block;
+        }
+        #info-card h2 {
+            margin: 0 0 10px;
+            font-size: 22px;
+        }
+        #info-card p {
+            margin: 0 0 10px;
+            line-height: 1.5;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+        #info-card .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            border: none;
+            background: transparent;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            color: #444;
+        }
+    </style>
+    <title>Soft Drink History</title>
+</head>
+<body>
+    <div id="info-card" role="dialog" aria-modal="true" aria-labelledby="info-card-title">
+        <button class="close-btn" aria-label="Close info card">×</button>
+        <h2 id="info-card-title"></h2>
+        <p id="info-card-text"></p>
+    </div>
+    <a-scene light="">
+        <a-assets> <!-- The code below is where I defined my 3D assets, Images and sounds-->
+                <a-asset-item id="cokeBottleAsset" src="Coca-Cola/Coca-Cola_Bottle.glb"></a-asset-item>
+                <a-asset-item id="cokeVendingMachine" src="Coca-Cola/coca-cola_vending_machine.glb"></a-asset-item>
+                <a-asset-item id="drPepperCan" src="Dr.Pepper/dr_pepper_can.glb"></a-asset-item>
+                <a-asset-item id="fantaCan" src="Fanta/fanta_can.glb"></a-asset-item>
+                <a-asset-item id="pedestal" src="Museum/pedestal.glb"></a-asset-item>
+                <a-asset-item id="chandelier" src="Museum/vintage_chandelier.glb"></a-asset-item>
+                <a-asset-item id="museum" src="Museum/old_museum_building.glb"></a-asset-item>
+                <a-asset-item id="MtnDewCan" src="Mountain Dew/Mountain_Dew_Can.glb"></a-asset-item>
+                <a-asset-item id="RetroPepsiCan" src="Pepsi/retro_pepsi_can.glb"></a-asset-item>
+                <a-asset-item id="ModernCokeBottle" src="Coca-Cola/coca-cola_bottle_plastic.glb"></a-asset-item>
+                <a-asset-item id="FantaBottle" src="Fanta/fanta_bottle.glb"></a-asset-item>
+                <a-asset-item id="MtnDewBottle" src="Mountain Dew/mountain_dew_bottle.glb"></a-asset-item>
+                <a-asset-item id="PepsiPlasticBottle" src="Pepsi/pepsi_max_lime_bottle_0.5_l.glb"></a-asset-item>
+                <a-asset-item id="pepsiVendingMachine" src="Pepsi/pepsi_vending_machine.glb"></a-asset-item>
+                <img id="wood" src="Textures/Wood.jpg">
+                <img id="woodN" src="Textures/WoodNormal.png">  
+                <img id="cokeBottle1890" src="Images/Coca-cola_botle_1890.jpg">
+                <img id="oldFantaBottle" src="Images/First_Fanta_bottle.jpg">
+                <img id="oldMountainDewBottle" src="Images/Oldmtdewbottle.jpg">
+                <img id="oldSchweppesBottle" src="Images/Egg_bottle_schweppes.jpg">
+                <img id="oldDrPepperBottle" src="Images/ol_drPepper_bottle.jpg">
+                <img id="oldSpriteBottle" src="Images/Sprite_old_Bottle.jpg">
+                <img id="oldDrPepperBottle" src="Images/ol_drPepper_bottle.jpg">
+                <img id="oldDrPepperBottle" src="Images/ol_drPepper_bottle.jpg">
+                <img id="old7UPBottle" src="Images/7UP_Old_Bottle.jpg">
+                <img id="oldPepsiBottle" src="Images/Old_Pepsi_Bottle.jpg">
+                <img id="1940sCokeBottle" src="Images/Coca-Cola1940s.jpg">
+                <img id="SchweppesBottle" src="Images/Schweppes_Bottle.jpg">
+                <img id="1970sSpriteCan" src="Images/Sprite_Can_1970.jpg">
+                <img id="1980sDiet7UP" src="Images/1980_Diet_7UP.jpg">
+                <img id="SchweppesPlasticBottle" src="Images/Schweppes.jpg">
+                <img id="ModernDrPepperBottle" src="Images/Dr_Pepper_Plastic_Bottle.jpg">
+                <img id="ModernSpriteBottle" src="Images/Sprite_Plastic_Bottle.jpg">
+                <img id="Modern7UPBottle" src="Images/7UP_Plastic_Bottle.jpg">
+                <audio id="vendingAudio" src="Sound effects/Vending Machine.mp3"></audio>
+                <audio id="openCan" src="Sound effects/CanOpening.mp3"></audio>
+            </a-assets>
+
+
+        <!-- The below  code places all the 3D models, and images in the right positions throughout the museum.-->
+        <a-entity gltf-model="#museum" position="0 0 -100" scale="10 10 10"></a-entity>
+        <a-entity light="type: ambient; color: #ffffff; intensity: 0.5"></a-entity>
+        
+
+        <a-entity position="-82 109 -100" scale="2 2 2">
+            <a-entity gltf-model="#chandelier"></a-entity>
+            <a-entity light="type: point; color: #ffdca3; intensity: 5; distance: 30; decay: 2" position="0 -0.5 0"></a-entity>
+        </a-entity>
+        <a-entity position="0 105.5 -100" scale="2 2 2">
+            <a-entity gltf-model="#chandelier"></a-entity>
+            <a-entity light="type: point; color: #ffdca3; intensity: 5; distance: 30; decay: 2" position="0 -0.5 0"></a-entity>
+        </a-entity>
+        <a-entity position="82 109 -100" scale="2 2 2">
+            <a-entity gltf-model="#chandelier"></a-entity>
+            <a-entity light="type: point; color: #ffdca3; intensity: 5; distance: 30; decay: 2" position="0 -0.5 0"></a-entity>
+        </a-entity>
+
+        <a-entity position="-24 0 -82" scale="1 1 1">
+            <a-cylinder height="7" radius="0.2" src="#wood" normal-map="#woodN"></a-cylinder>
+            <a-box width="3" height="2" depth="0.3" position="0 4.5 0" src="#wood" normal-map="#woodN"></a-box>
+            <a-text value="<- Beginning of the brand" position="-1.3 4.5 0.2"></a-text>
+        </a-entity>
+        <a-entity position="24 0 -82" scale="1 1 1">
+            <a-cylinder height="7" radius="0.2" src="#wood" normal-map="#woodN"></a-cylinder>
+            <a-box width="3" height="2" depth="0.3" position="0 4.5 0" src="#wood" normal-map="#woodN"></a-box>
+            <a-text value="Modern era ->" position="-0.7 4.5 0.2"></a-text>
+        </a-entity>
+        <a-entity position="0 0 -82" scale="1 1 1">
+            <a-cylinder height="7" radius="0.2" src="#wood" normal-map="#woodN"></a-cylinder>
+            <a-box width="3" height="2" depth="0.3" position="0 4.5 0" src="#wood" normal-map="#woodN"></a-box>
+            <a-text value="^ Rise in fame ^" position="-0.7 4.5 0.2"></a-text>
+        </a-entity>
+
+        <a-entity id="vendingMachine" class="clickable" gltf-model="#cokeVendingMachine" position="-149 7.5 -91" rotation="0 90 0" scale="0.1 0.1 0.1"></a-entity>
+
+        <a-entity id="PepsiVendingMachine" class="clickable" gltf-model="#pepsiVendingMachine" position="149 7.5 -91" rotation="0 -90 0" scale="4 4 4"></a-entity>
+
+        <a-entity gltf-model="#pedestal" position="-73 0 -52" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="bottle1890Image" class="clickable" position="-73 6 -52" rotation="0 180 0" width="3" height="3" src="#cokeBottle1890">
+            <a-entity light="type: point; color: #ffcc66; intensity: 1.2; distance: 60; decay: 2" position="0 15 0"></a-entity>
+        </a-plane>
+
+        <a-entity gltf-model="#pedestal" position="-88 0 -52" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="originalFantaBottle" class="clickable" position="-88 6 -52" rotation="0 180 0" width="3" height="3" src="#oldFantaBottle">
+            <a-entity light="type: point; color: #ffcc66; intensity: 1.2; distance: 60; decay: 2" position="0 15 0"></a-entity>
+        </a-plane>
+
+        <a-entity gltf-model="#pedestal" position="-103 0 -52" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="originalMountainDewBottle" class="clickable" position="-103 6 -52" rotation="0 180 0" width="3" height="3" src="#oldMountainDewBottle">
+            <a-entity light="type: point; color: #ffcc66; intensity: 1.2; distance: 60; decay: 2" position="0 15 0"></a-entity>
+        </a-plane>
+
+        <a-entity gltf-model="#pedestal" position="-118 0 -52" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="originalSchweppesBottle" class="clickable" position="-118 6 -52" rotation="0 180 0" width="5" height="3" src="#oldSchweppesBottle">
+            <a-entity light="type: point; color: #ffcc66; intensity: 1.2; distance: 60; decay: 2" position="0 15 0"></a-entity>
+        </a-plane>
+
+        <a-entity gltf-model="#pedestal" position="-118 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="originalDrPepperBottle" class="clickable" src="#oldDrPepperBottle" position="-118 6 -147" rotation="0 0 0" width="3" height="3">
+            <a-entity light="type: point; color: #ffcc66; intensity: 1.2; distance: 60; decay: 2" position="0 15 0"></a-entity>
+        </a-plane>
+
+        <a-entity gltf-model="#pedestal" position="-103 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="originalSpriteBottle" class="clickable" src="#oldSpriteBottle" position="-103 6 -147" rotation="0 0 0" width="3" height="3">
+            <a-entity light="type: point; color: #ffcc66; intensity: 1.2; distance: 60; decay: 2" position="0 15 0"></a-entity>
+        </a-plane>
+
+        <a-entity gltf-model="#pedestal" position="-88 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="original7UPBottle" class="clickable" src="#old7UPBottle" position="-88 6 -147" rotation="0 0 0" width="3" height="3">
+            <a-entity light="type: point; color: #ffcc66; intensity: 1.2; distance: 60; decay: 2" position="0 15 0"></a-entity>
+        </a-plane>
+
+        <a-entity gltf-model="#pedestal" position="-73 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="originalPepsiBottle" class="clickable" src="#oldPepsiBottle" position="-73 6 -147" rotation="0 0 0" width="3" height="3">
+            <a-entity light="type: point; color: #ffcc66; intensity: 1.2; distance: 60; decay: 2" position="0 15 0"></a-entity>
+        </a-plane>
+
+        <a-entity gltf-model="#pedestal" position="-24 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="CokeBottle1940s" class="clickable" src="#1940sCokeBottle" position="-24 6 -147" rotation="0 0 0" scale="3 3 3"></a-plane>
+
+        <a-entity gltf-model="#pedestal" position="-9 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-entity id="FantaCan" class="clickable" gltf-model="#fantaCan" position="-9 3.5 -147" rotation="0 0 0" scale="10 10 10"></a-entity>
+        
+        <a-entity light="type: point; color: #ffc7c8; intensity: 0.8; distance: 60; decay: 2" position="-1.5 15 -147"></a-entity>
+        
+        <a-entity gltf-model="#pedestal" position="6 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-entity id="MountainDewCan" class="clickable" gltf-model="#MtnDewCan" position="6 3.5 -147" rotation="0 0 0" scale="0.3 0.3 0.3"></a-entity>
+        
+        <a-entity gltf-model="#pedestal" position="21 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="Schwppesbottle" class="clickable" position="21 6 -147" rotation="0 0 0" width="2" height="4" src="#SchweppesBottle"></a-plane>
+
+
+        <a-entity gltf-model="#pedestal" position="-24 0 -117" scale="0.5 0.3 0.5"></a-entity>
+        <a-entity id="DrPepperCan" class="clickable" gltf-model="#drPepperCan" position="-24 4 -117" rotation="0 0 0" scale="0.3 0.3 0.3"></a-entity></a-entity>
+
+        <a-entity gltf-model="#pedestal" position="-9 0 -117" scale="0.5 0.3 0.5"></a-entity>
+        <a-entity id="Retropepsican" class="clickable" gltf-model="#RetroPepsiCan" position="-9 3.5 -117" rotation="0 0 0" scale="0.1 0.1 0.1"></a-entity>
+
+        <a-entity gltf-model="#pedestal" position="6 0 -117" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="SpriteCan1970s" class="clickable" position="6 6 -117" rotation="0 0 0" width="3" height="3" src="#1970sSpriteCan"></a-plane>
+
+        <a-entity gltf-model="#pedestal" position="21 0 -117" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="19807UpCan" class="clickable" position="21 6 -117" rotation="0 0 0" width="3" height="3" src="#1980sDiet7UP"></a-plane>
+
+        <a-entity gltf-model="#pedestal" position="73 0 -52" scale="0.5 0.3 0.5"></a-entity>
+        <a-entity id="cokeBottleModern" class="clickable" gltf-model="#ModernCokeBottle" position="73 3.5 -46.5" scale="3 3 3"></a-entity>
+
+        <a-entity gltf-model="#pedestal" position="88 0 -52" scale="0.5 0.3 0.5"></a-entity>
+        <a-entity id="FantaPlasticBottle" class="clickable" gltf-model="#FantaBottle" position="88 3.5 -52" scale="5 5 5"></a-entity>
+
+        <a-entity gltf-model="#pedestal" position="103 0 -52" scale="0.5 0.3 0.5"></a-entity>
+        <a-entity id="MtnDewPlasticBottle" class="clickable" gltf-model="#MtnDewBottle" position="103 4.5 -52" scale="0.002 0.002 0.002"></a-entity>
+
+        <a-entity gltf-model="#pedestal" position="118 0 -52" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="SchweppesPlasticDisplay" class="clickable" position="118 6 -52" rotation="0 180 0" width="3" height="3" src="#SchweppesPlasticBottle"></a-plane>
+
+        <a-entity gltf-model="#pedestal" position="118 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="drPepperPlasticBottle" class="clickable" position="118 6 -147" rotation="0 0 0" width="3" height="3" src="#ModernDrPepperBottle"></a-plane>
+
+        <a-entity gltf-model="#pedestal" position="103 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="SpriteBottleModern" class="clickable" position="103 6 -147" rotation="0 0 0" width="3" height="3" src="#ModernSpriteBottle"></a-plane>
+
+        <a-entity gltf-model="#pedestal" position="88 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-plane id="7UPPlasticBottle" class="clickable" position="88 6 -147" rotation="0 0 0" width="3" height="3" src="#Modern7UPBottle"></a-plane>
+
+        <a-entity gltf-model="#pedestal" position="73 0 -147" scale="0.5 0.3 0.5"></a-entity>
+        <a-entity id="pepsiPlasticBottle" class="clickable" gltf-model="#PepsiPlasticBottle" position="80 4.5 -147" scale="7 7 7"></a-entity>
+
+
+        <!-- Camera -->
+        <a-entity position="0 5 0">
+            <a-camera wasd-controls="acceleration: 200; fly: true" look-controls>
+                <a-cursor raycaster="objects: .clickable" color="white"></a-cursor>
+            </a-camera>
+        </a-entity>
+
+        <a-sky color="lightblue"></a-sky>
+        <a-plane position="0 0 -4" rotation="-90 0 0" width="500" height="500" color="#7BC8A4"></a-plane>
+    </a-scene>
+    <script>     //The JavaScript code for handling interactions and info cards is below.
+
+        // Get references to all clickable elements and the info card
+        const bottle1890Image = document.getElementById('bottle1890Image');
+        const fantaBottleImage = document.getElementById('originalFantaBottle');
+        const oldMtnDewBottleImage = document.getElementById('originalMountainDewBottle');
+        const oldSchweppesBottleImage = document.getElementById('originalSchweppesBottle');
+        const oldDrPepperBottleImage = document.getElementById('originalDrPepperBottle');
+        const oldSpriteBottleImage = document.getElementById('originalSpriteBottle');
+        const old7UPBottleImage = document.getElementById('original7UPBottle');
+        const oldPepsiBottleImage = document.getElementById('originalPepsiBottle');
+        const coke1940sBottleImage = document.getElementById('CokeBottle1940s');
+        const FantaCanAsset = document.getElementById('FantaCan');
+        const MountainDewCanAsset = document.getElementById('MountainDewCan');
+        const SchweppesBottleImage = document.getElementById('Schwppesbottle');
+        const DrPepperCanAsset = document.getElementById('DrPepperCan');
+        const RetroPepsiCanAsset = document.getElementById('Retropepsican');
+        const SpriteCan1970sImage = document.getElementById('SpriteCan1970s');
+        const Diet7UPCanImage = document.getElementById('19807UpCan');
+        const cokeModernBottleAsset = document.getElementById('cokeBottleModern');
+        const FantaPlasticBottleAsset = document.getElementById('FantaPlasticBottle');
+        const MtnDewPlasticBottleAsset = document.getElementById('MtnDewPlasticBottle');
+        const SchweppesPlasticBottleAsset = document.getElementById('SchweppesPlasticDisplay');
+        const drPepperPlasticBottleAsset = document.getElementById('drPepperPlasticBottle');
+        const SpriteBottleModernImage = document.getElementById('SpriteBottleModern');
+        const sevenUpPlasticBottleAsset = document.getElementById('7UPPlasticBottle');
+        const pepsiPlasticBottleAsset = document.getElementById('pepsiPlasticBottle');
+        const infoCard = document.getElementById('info-card');
+        const infoCardTitle = document.getElementById('info-card-title');
+        const infoCardText = document.getElementById('info-card-text');
+        const closeBtn = infoCard && infoCard.querySelector('.close-btn');
+
+        // Define the content for each info card
+        const infoContent = {
+            bottle1890Image: {
+                title: 'Origin of Coca-Cola',
+                text: 'On May 8, 1886, Dr. John Pemberton brought his perfected syrup to Jacobs\' Pharmacy in downtown Atlanta, where the first glass of Coca-Cola was poured. Serving about nine drinks per day in its first year, Coca-Cola was an exciting new drink in the beginning.'
+            },
+            CokeBottle1940s: {
+                title: 'Rise in Fame of Coca-Cola',
+                text: '1892: The birth of the Company. The business was bought by Asa Griggs Candler.\n\n1899: The Bottling System. Sold exclusive bottling rights for $1, which made the beverage portable and globally accessible.\n\n1915: The Contour Bottle. To be distinguished among other copycats, the company introduced its iconic contour-shaped bottle.\n\n1940s: Global Expansion. President Robert Woodruff pledged to provide every American soldier with a Coke for 5 cents, regardless of location, sparking overseas distribution.'
+            },
+            cokeModernBottleAsset: {
+                title: 'Coca-Cola in the Modern Era',
+                text: 'From the 2000s to the present, Coca-Cola transformed from a traditional soft-drink maker into a "total beverage company". Facing shifting consumer health habits and increased sustainability scrutiny, the brand diversified its portfolio, expanded globally, and deployed highly personalized marketing campaigns'
+            },
+            originalFantaBottle: {
+                title: 'Origin of Fanta',
+                text: 'Fanta was created in Nazi Germany in 1940 by Coca-Cola Deutschland to overcome a trade embargo that stopped the import of Coca-Cola syrup. Max Keith, the head of the German branch, used leftover food by-products like whey and apple pulp to create the new drink.'
+            },
+            FantaCan: {
+                title: 'Rise in Fame of Fanta',
+                text: '1955: The modern Fanta Orange formula was developed by Italian bottlers in Naples, establishing the iconic citrus flavor profile that defined the brand.\n\n1960s-70s: Global Expansion. Fanta expanded internationally, becoming especially popular in Europe and Latin America.\n\n1980s-90s: Diversification. The brand introduced new flavors like Fanta Grape and Fanta Pineapple, broadening its appeal.'
+            },
+            FantaPlasticBottle: {
+                title: 'Fanta in the Modern Era',
+                text: 'Since the 2000s, Fanta has evolved from a simple fruit soda into a globally diverse brand known for localized flavors, sugar-free options, and vibrant, Gen-Z-focused campaigns. The brand has leaned heavily into nostalgia, reviving its early 2000s "Wanta Fanta" anthem'
+            },
+            originalMountainDewBottle: {
+                title: 'Origin of Mountain Dew',
+                text: 'Mountain Dew was created in the 1940s by Tennessee bottlers Barney and Ally Hartman as a lemon-lime mixer for whiskey and was officially trademarked in 1948. The name "Mountain Dew" was a slang term for homemade whiskey, and the drink was originally marketed as a mixer rather than a standalone soda.'
+            },
+            MountainDewCan: {
+                title: 'Rise in Fame of Mountain Dew',
+                text: '1960s-1970s: The National Pivot After being acquired by PepsiCo in 1964, the marketing shifted away from the "Willy the Hillbilly" mascot. By 1974, PepsiCo introduced the bright green citrus formulation that consumers recognize today.\n\n1980s: The introduction of the "Do the Dew" marketing campaign and sponsorship of extreme sports helped solidify its image as a bold, adventurous brand.'
+            },
+            MtnDewPlasticBottle: {
+                title: 'Mountain Dew in the Modern Era',
+                text: 'Since the 2000s, Mountain Dew has evolved from a niche citrus soda into a multi-flavored, multi-platform brand. With over 30 flavors worldwide, it has embraced gaming culture and digital marketing, becoming a staple for younger consumers and maintaining its position as a leading soft drink.'
+            },
+            originalSchweppesBottle: {
+                title: 'Origin of Schweppes',
+                text: 'Founded in 1783 by German-Swiss watchmaker Jacob Schweppe in Geneva, Schweppes pioneered the mass production of carbonated mineral water. The brand, known for "Schweppervescence," moved to London in 1792. '
+            },
+            Schweppesbottle: {
+                title: 'Rise in Fame of Schweppes',
+                text: '1800s: Expansion and Innovation. Schweppes expanded across Europe and introduced new flavors like tonic water and ginger ale, becoming a staple in cocktail culture.\n\n1900s: Global Reach. The brand continued to grow internationally, maintaining its reputation for quality and innovation in the beverage industry.'
+            },
+            SchweppesPlasticBottle: {
+                title: 'Schweppes in the Modern Era',
+                text: 'In the 2000s, Schweppes evolved from a traditional carbonated water brand into a versatile beverage company. With a focus on premium mixers and flavored sparkling waters, Schweppes has adapted to changing consumer preferences while maintaining its heritage of quality and innovation.'
+            },
+            originalDrPepperBottle: {
+                title: 'Origin of Dr Pepper',
+                text: 'Dr Pepper, created in 1885 by pharmacist Charles Alderton in Waco, Texas, is the oldest major soft drink brand in America. Alderton crafted the unique 23-flavor blend to capture the sweet, fruity aroma of a soda fountain. It predates Coca-Cola by one year.'
+            },
+            DrPepperCan: {
+                title: 'Rise in Fame of Dr Pepper',
+                text: '1904: World\'s Fair Debut. Dr Pepper gained national attention at the 1904 St. Louis World\'s Fair, where it was introduced to a wider audience.\n\n1950s-60s: Marketing Boom. The brand launched memorable advertising campaigns, including the iconic "Be a Pepper" slogan, which helped solidify its place in American pop culture.'
+            },
+            DrPepperPlasticBottle: {
+                title: 'Dr Pepper in the Modern Era',
+                text: 'Since 2000, Dr Pepper has evolved from a single classic soda into a massive flavor empire. The 2000s and 2010s were defined by bold new variations and zero-sugar makeovers. By the 2020s, Dr Pepper had surpassed Pepsi to become the number-two selling soda in the United States.'
+            },
+            originalSpriteBottle: {
+                title: 'Origin of Sprite',
+                text: 'Sprite was originally developed in West Germany in 1959 as Fanta Klare Zitrone. Introduced to the U.S. in 1961 by The Coca-Cola Company, it was created as a direct competitor to 7 Up.'
+            },
+            SpriteCan1970s: {
+                title: 'Rise in Fame of Sprite',
+                text: '1960s-70s: Market Entry and Growth. After its U.S. launch in 1961, Sprite quickly gained popularity as a refreshing lemon-lime soda, especially among younger consumers.\n\n1980s-90s: Cultural Icon. Sprite\'s marketing campaigns, including the "Obey Your Thirst" slogan and collaborations with hip-hop artists, helped it become a cultural icon in the beverage industry.'
+            },
+            SpriteBottleModernImage: {
+                title: 'Sprite in the Modern Era',
+                text: 'Sprite’s evolution from the 2000s to today has been defined by nostalgic flavor revivals like Sprite Tropical Mix, bold "Obey Your Thirst" marketing Sprite (drink) Facts for Kids, and a major 2022 pivot to clear plastic bottles to improve recyclability Sprite (drink) Facts for Kids.'
+            },
+            original7UPBottle: {
+                title: 'Origin of 7 Up',
+                text: '7 Up was created in St. Louis, Missouri, in October 1929 by Charles Leiper Grigg. Originally marketed as "Bib-Label Lithiated Lemon-Lime Soda," the drink famously contained lithium citrate—a mood-stabilizing drug used to treat psychiatric conditions.'
+            },
+            Diet7UPCan1980s: {
+                title: 'Rise in Fame of Diet 7 Up',
+                text: '1980s: Introduction of Diet 7 Up. In response to the growing demand for low-calorie beverages, 7 Up launched Diet 7 Up in the early 1980s, catering to health-conscious consumers and expanding its market share in the diet soda segment.'
+            },
+            Modern7UPBottle: {
+                title: '7 Up in the Modern Era',
+                text: 'Since the 2000s, 7UP has evolved its marketing, packaging, and formulas to compete in an increasingly crowded beverage market. While its international presence remains strong, it shifted its U.S. focus to retail value and specialty flavors as competitors like Sprite dominated.'
+            },
+            originalPepsiBottle: {
+                title: 'Origin of Pepsi',
+                text: 'Pepsi was invented in 1893 by pharmacist Caleb Bradham in New Bern, North Carolina. Originally sold at his drugstore soda fountain as "Brads Drink," it was a mix of carbonated water, sugar, vanilla, rare oils, and kola nuts.'
+            },
+            RetroPepsiCan: {
+                title: 'Rise in Fame of Pepsi',
+                text: '1900s: Early Growth. Pepsi gained popularity in the early 20th century, especially during the Great Depression when it was marketed as a more affordable alternative to Coca-Cola.\n\n1960s-70s: The Cola Wars. Pepsi launched aggressive marketing campaigns targeting younger consumers, including the famous "Pepsi Generation" slogan, which helped it gain significant market share against Coca-Cola.'
+            },
+            pepsiPlasticBottle: {
+                title: 'Pepsi in the Modern Era',
+                text: 'From the 2000s to today, Pepsi evolved from a Y2K-inspired pop-culture giant into a sleek digital brand. Today, the brand is in the midst of a massive global rollout of its retro-inspired 2023 logo, read more on CNN Business.'
+            }
+        };
+        // Function to open the info card with the appropriate content
+        function openInfoCard(content) {
+            if (!infoCard || !infoCardTitle || !infoCardText) return;
+            infoCardTitle.textContent = content.title;
+            infoCardText.textContent = content.text;
+            infoCard.classList.add('visible');
+        }
+
+        // Add click event listeners to each clickable element to open the info card with the corresponding content
+        if (bottle1890Image && infoContent.bottle1890Image) {
+            bottle1890Image.addEventListener('click', () => openInfoCard(infoContent.bottle1890Image));
+        }
+
+        if (fantaBottleImage && infoContent.originalFantaBottle) {
+            fantaBottleImage.addEventListener('click', () => openInfoCard(infoContent.originalFantaBottle));
+        }
+
+        if (oldMtnDewBottleImage && infoContent.originalMountainDewBottle) {
+            oldMtnDewBottleImage.addEventListener('click', () => openInfoCard(infoContent.originalMountainDewBottle));
+        }
+
+        if (oldSchweppesBottleImage && infoContent.originalSchweppesBottle) {
+            oldSchweppesBottleImage.addEventListener('click', () => openInfoCard(infoContent.originalSchweppesBottle));
+        }
+
+        if (oldDrPepperBottleImage && infoContent.originalDrPepperBottle) {
+            oldDrPepperBottleImage.addEventListener('click', () => openInfoCard(infoContent.originalDrPepperBottle));
+        }
+
+        if (oldSpriteBottleImage && infoContent.originalSpriteBottle) {
+            oldSpriteBottleImage.addEventListener('click', () => openInfoCard(infoContent.originalSpriteBottle));
+        }
+
+        if (old7UPBottleImage && infoContent.original7UPBottle) {
+            old7UPBottleImage.addEventListener('click', () => openInfoCard(infoContent.original7UPBottle));
+        }
+
+        if (oldPepsiBottleImage && infoContent.originalPepsiBottle) {
+            oldPepsiBottleImage.addEventListener('click', () => openInfoCard(infoContent.originalPepsiBottle));
+        }
+
+        if (coke1940sBottleImage && infoContent.CokeBottle1940s) {
+            coke1940sBottleImage.addEventListener('click', () => openInfoCard(infoContent.CokeBottle1940s));
+        }
+
+        if (FantaCanAsset && infoContent.FantaCan) {
+            FantaCanAsset.addEventListener('click', () => openInfoCard(infoContent.FantaCan));
+        }
+
+        if (MountainDewCanAsset && infoContent.MountainDewCan) {
+            MountainDewCanAsset.addEventListener('click', () => openInfoCard(infoContent.MountainDewCan));
+        }
+
+        if (SchweppesBottleImage && infoContent.Schweppesbottle) {
+            SchweppesBottleImage.addEventListener('click', () => openInfoCard(infoContent.Schweppesbottle));
+        }
+
+        if (DrPepperCanAsset && infoContent.DrPepperCan) {
+            DrPepperCanAsset.addEventListener('click', () => openInfoCard(infoContent.DrPepperCan));
+        }
+
+        if (RetroPepsiCanAsset && infoContent.RetroPepsiCan) {
+            RetroPepsiCanAsset.addEventListener('click', () => openInfoCard(infoContent.RetroPepsiCan));
+        }
+
+        if (SpriteCan1970sImage && infoContent.SpriteCan1970s) {
+            SpriteCan1970sImage.addEventListener('click', () => openInfoCard(infoContent.SpriteCan1970s));
+        }
+
+        if (Diet7UPCanImage && infoContent.Diet7UPCan1980s) {
+            Diet7UPCanImage.addEventListener('click', () => openInfoCard(infoContent.Diet7UPCan1980s));
+        }
+
+        if (cokeModernBottleAsset && infoContent.cokeModernBottleAsset) {
+            cokeModernBottleAsset.addEventListener('click', () => openInfoCard(infoContent.cokeModernBottleAsset));
+        }
+
+        if (FantaPlasticBottleAsset && infoContent.FantaPlasticBottle) {
+            FantaPlasticBottleAsset.addEventListener('click', () => openInfoCard(infoContent.FantaPlasticBottle));
+        }
+
+        if (MtnDewPlasticBottleAsset && infoContent.MtnDewPlasticBottle) {
+            MtnDewPlasticBottleAsset.addEventListener('click', () => openInfoCard(infoContent.MtnDewPlasticBottle));
+        }
+
+        if (SchweppesPlasticBottleAsset && infoContent.SchweppesPlasticBottle) {
+            SchweppesPlasticBottleAsset.addEventListener('click', () => openInfoCard(infoContent.SchweppesPlasticBottle));
+        }
+
+        if (drPepperPlasticBottleAsset && infoContent.DrPepperPlasticBottle) {
+            drPepperPlasticBottleAsset.addEventListener('click', () => openInfoCard(infoContent.DrPepperPlasticBottle));
+        }
+
+        if (SpriteBottleModernImage && infoContent.SpriteBottleModernImage) {
+            SpriteBottleModernImage.addEventListener('click', () => openInfoCard(infoContent.SpriteBottleModernImage));
+        }
+
+        if (sevenUpPlasticBottleAsset && infoContent.Modern7UPBottle) {
+            sevenUpPlasticBottleAsset.addEventListener('click', () => openInfoCard(infoContent.Modern7UPBottle));
+        }
+
+        if (pepsiPlasticBottleAsset && infoContent.pepsiPlasticBottle) {
+            pepsiPlasticBottleAsset.addEventListener('click', () => openInfoCard(infoContent.pepsiPlasticBottle));
+        }
+
+        // Add click event listener to the close button to hide the info card
+        if (closeBtn && infoCard) {
+            closeBtn.addEventListener('click', () => {
+                infoCard.classList.remove('visible');
+            });
+        }
+
+        // Play vending machine sound when the vending machine is clicked
+        const vendingMachine = document.getElementById('vendingMachine');
+        const vendingMachineSound = document.getElementById('vendingAudio');
+
+        // Play vending machine sound for the Coke vending machine
+        if (vendingMachine && vendingMachineSound) {
+            vendingMachine.addEventListener('click', () => {
+                vendingMachineSound.currentTime = 0;
+                vendingMachineSound.play().catch(() => {
+                    console.warn('Unable to play vending machine sound.');
+                });
+            });
+        }
+
+        // Also play vending machine sound when the Pepsi vending machine is clicked
+        const pepsiVendingMachine = document.getElementById('PepsiVendingMachine');
+        if (pepsiVendingMachine && vendingMachineSound) {
+            pepsiVendingMachine.addEventListener('click', () => {
+                vendingMachineSound.currentTime = 0;
+                vendingMachineSound.play().catch(() => {
+                    console.warn('Unable to play vending machine sound for Pepsi machine.');
+                });
+            });
+        }
+
+        // Play can opening sound for all can models
+        const canOpenSound = document.getElementById('openCan');
+        const canModels = [
+            document.getElementById('FantaCan'),
+            document.getElementById('MountainDewCan'),
+            document.getElementById('DrPepperCan'),
+            document.getElementById('Retropepsican')
+        ];
+
+        // Add click event listeners to all can models to play the can opening sound
+        canModels.forEach(canModel => {
+            if (canModel && canOpenSound) {
+                canModel.addEventListener('click', () => {
+                    canOpenSound.currentTime = 0;
+                    canOpenSound.play().catch(() => {
+                        console.warn('Unable to play can opening sound.');
+                    });
+                });
+            }
+        });
+
+    </script>
+</body>
+</html>
